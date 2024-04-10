@@ -1,0 +1,19 @@
+# exclude .idea directory
+.idea
+bin
+
+# exclude all .env files
+.env.*
+
+# mac
+.DS_Store
+
+# node_modules
+node_modules
+
+# files & archives
+files
+archives
+
+# logs
+logs
