@@ -48,3 +48,6 @@ uninstall:
 
 ad:
 	$(NODE_DEV) $(TS_NODE) $(DEV_PATH) $(AD) $(target)
+
+dev:
+	$(NODE_DEV) $(TS_NODE) $(DEV_PATH) $(cmd) $(f)

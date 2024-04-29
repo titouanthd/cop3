@@ -1,3 +1,5 @@
+import DateUtil from "../utils/DateUtil";
+
 export const INFO = 'INFO';
 export const ERROR = 'ERROR';
 export const WARN = 'WARN';
@@ -9,7 +11,24 @@ export class LoggerService {
         this.#identifier = identifier;
     }
 
-    public log(message: string): void {
+    public log(message: string, level: string) {
+        switch (level) {
+            case INFO:
+                this.info(message);
+                break;
+            case ERROR:
+                this.error(message);
+                break;
+            case WARN:
+                this.warn(message);
+                break;
+            default:
+                this.info(message);
+                break;
+        }
+    }
+
+    public info(message: string): void {
         console.log(this.formatMessage(message));
     }
 
@@ -22,7 +41,7 @@ export class LoggerService {
     }
 
     private formatMessage(message: string, level: string = INFO): string {
-        return `::${this.identifier}:: [${level}] - ${message}`;
+        return `::${DateUtil.getFormattedIsoDate()}:: [${level}] - ${message}`;
     }
 
     get identifier(): string {

@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import AbstractCommand from './abstraction/AbstractCommand';
 import FolderManagerService from '../services/FolderManagerService';
-import { EMPTY, ESTABLISHMENTS, FILES, ANALYZE_REPORTS } from '../globals/AppConstants';
+import { EMPTY, ESTABLISHMENTS_FOLDER, FILES_FOLDER, ANALYZE_REPORTS_FOLDER } from '../globals/AppConstants';
 import ProcessUtil from '../utils/ProcessUtil';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
@@ -13,6 +13,7 @@ import { Document, Packer, Paragraph } from 'docx';
 import fs from 'fs';
 import InseeEstablishmentInterface from '../interfaces/InseeEstablishmentInterface';
 import ExtractStartdocContentService from '../services/ExtractStartdocContentService';
+import {ERROR} from "../services/LoggerService";
 
 export default class AnalyzeDocumentsCommand extends AbstractCommand {
     private startdocExtractor = new ExtractStartdocContentService();
@@ -24,7 +25,7 @@ export default class AnalyzeDocumentsCommand extends AbstractCommand {
             'ad',
             'Analyze documents',
             process.argv[3] ?? EMPTY,
-            process.cwd() + '/' + FILES + '/' + DateUtil.getFormattedIsoDate() + '/',
+            process.cwd() + '/' + FILES_FOLDER + '/' + DateUtil.getFormattedIsoDate() + '/',
         );
     }
 
@@ -34,34 +35,34 @@ export default class AnalyzeDocumentsCommand extends AbstractCommand {
             if (ProcessUtil.isValidCsvFile(this.target)) {
                 targetPath = this.target;
             } else {
-                console.error('Invalid target file');
+                this.log('Invalid target file', ERROR);
                 return;
             }
         }
 
         if (this.destination === EMPTY) {
-            console.error('Invalid destination folder');
+            this.log('Invalid destination folder', ERROR);
             return;
         }
 
-        console.log('Analyze documents');
+        this.log('Analyze documents');
         const documents: StartdocDocumentInterface[] = await FolderManagerService.parseCsv(targetPath);
-        console.log(`Found ${documents.length} documents`);
+        this.log(`Found ${documents.length} documents`);
         for (const document of documents) {
             if (document.siret !== '' && document.siret !== null) {
                 const establishment = await InseeSireneApiService.getEstablishmentBySiret(document.siret);
                 if (establishment !== null) {
-                    console.log(`Found establishment for document ${document.subject}`);
-                    FolderManagerService.createFolder(this.destination + ESTABLISHMENTS);
+                    this.log(`Found establishment for document ${document.subject}`);
+                    FolderManagerService.createFolder(this.destination + ESTABLISHMENTS_FOLDER);
                     FolderManagerService.createFile(
-                        this.destination + ESTABLISHMENTS + '/' + document.siret + '.json',
+                        this.destination + ESTABLISHMENTS_FOLDER + '/' + document.siret + '.json',
                         JSON.stringify(establishment, null, 4),
                     );
-                    console.log(
-                        `Saved establishment for document ${document.subject}, path: ${this.destination + ESTABLISHMENTS + '/' + document.siret + '.json'}`,
+                    this.log(
+                        `Saved establishment for document ${document.subject}, path: ${this.destination + ESTABLISHMENTS_FOLDER + '/' + document.siret + '.json'}`,
                     );
                     // update the document with the establishment path
-                    document.company = this.destination + ESTABLISHMENTS + '/' + document.siret + '.json';
+                    document.company = this.destination + ESTABLISHMENTS_FOLDER + '/' + document.siret + '.json';
                 }
             }
         }
@@ -69,11 +70,12 @@ export default class AnalyzeDocumentsCommand extends AbstractCommand {
         const browser = await puppeteer.use(StealthPlugin()).launch({
             headless: true,
         });
+
         const page = await browser.pages().then((pages) => pages[0]);
         for (const document of documents) {
             let startDocAdminReport: Paragraph[] = [];
             if (document.url_admin_startdoc !== EMPTY && document.url_admin_startdoc !== null) {
-                console.log(`Analyzing document ${document.subject}`);
+                this.log(`Analyzing document ${document.subject}`);
                 await page.goto(document.url_admin_startdoc, { waitUntil: 'domcontentloaded' });
                 await page.content();
                 startDocAdminReport = await this.startdocExtractor.createStartdocDocumentReport(page);
@@ -82,7 +84,7 @@ export default class AnalyzeDocumentsCommand extends AbstractCommand {
 
             let establishmentParagraphs: Paragraph[] | null = null;
             if (document.company !== null && document.company !== EMPTY && document.company !== undefined) {
-                console.log(`Found establishment for document ${document.subject}`);
+                this.log(`Found establishment for document ${document.subject}`);
                 const establishment: InseeEstablishmentInterface = JSON.parse(fs.readFileSync(document.company, 'utf8'));
                 establishmentParagraphs = this.startdocExtractor.createEstablishmentParagraphs(establishment);
             }
@@ -95,14 +97,18 @@ export default class AnalyzeDocumentsCommand extends AbstractCommand {
                 ],
             });
 
-            FolderManagerService.createFolder(this.destination + ANALYZE_REPORTS);
+            FolderManagerService.createFolder(this.destination + ANALYZE_REPORTS_FOLDER);
             Packer.toBuffer(docx).then((buffer) => {
                 const fileName =
                     document.subject !== EMPTY && document.subject !== null
                         ? ProcessUtil.convertSubjectToFileName(document.subject)
                         : DateUtil.getFormattedIsoDate();
-                fs.writeFileSync(this.destination + ANALYZE_REPORTS + '/' + fileName + '.docx', buffer);
+                fs.writeFileSync(this.destination + ANALYZE_REPORTS_FOLDER + '/' + fileName + '.docx', buffer);
+                this.log(`Saved report for document ${document.subject}, path: ${this.destination + ANALYZE_REPORTS_FOLDER + '/' + fileName + '.docx'}`);
             });
         }
+
+        await browser.close();
+        this.log('Analyze documents done');
     }
 }

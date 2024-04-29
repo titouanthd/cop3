@@ -1,9 +1,12 @@
 import { Command } from 'commander';
 import DateUtil from '../../utils/DateUtil';
 import { EMPTY } from '../../globals/AppConstants';
+import {INFO, LoggerService} from "../../services/LoggerService";
 
 export default abstract class AbstractCommand {
-    private _identifier: string = DateUtil.getFormattedIsoDate();
+    #identifier: string = Date.now().toString();
+    #logger = new LoggerService(this.identifier);
+
     protected constructor(
         protected commander: Command,
         protected name: string,
@@ -18,6 +21,14 @@ export default abstract class AbstractCommand {
     protected abstract execute(): Promise<void>;
 
     get identifier(): string {
-        return this._identifier;
+        return this.#identifier;
+    }
+
+    get logger(): LoggerService {
+        return this.#logger;
+    }
+
+    public log(message: string, level: string = INFO): void {
+        this.logger.log(message, level);
     }
 }
