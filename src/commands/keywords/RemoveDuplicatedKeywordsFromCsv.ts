@@ -74,6 +74,8 @@ export class RemoveDuplicatedKeywordsFromCsv extends AbstractCommand {
                     k = k.replace(regex, '');
                 }
 
+                // coucou mon amour
+
                 k = k.replace(/\s+/g, ' ');
                 k = k.trim();
 
