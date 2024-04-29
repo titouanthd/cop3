@@ -1,4 +1,4 @@
-import DateUtil from "../utils/DateUtil";
+import DateUtil from '../utils/DateUtil';
 
 export const INFO = 'INFO';
 export const ERROR = 'ERROR';

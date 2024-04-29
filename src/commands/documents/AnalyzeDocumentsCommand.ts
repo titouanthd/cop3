@@ -13,7 +13,7 @@ import { Document, Packer, Paragraph } from 'docx';
 import fs from 'fs';
 import InseeEstablishmentInterface from '../../interfaces/InseeEstablishmentInterface';
 import ExtractStartdocContentService from '../../services/ExtractStartdocContentService';
-import {ERROR} from "../../services/LoggerService";
+import { ERROR } from '../../services/LoggerService';
 
 export default class AnalyzeDocumentsCommand extends AbstractCommand {
     private startdocExtractor = new ExtractStartdocContentService();
@@ -104,7 +104,9 @@ export default class AnalyzeDocumentsCommand extends AbstractCommand {
                         ? ProcessUtil.convertSubjectToFileName(document.subject)
                         : DateUtil.getFormattedIsoDate();
                 fs.writeFileSync(this.destination + ANALYZE_REPORTS_FOLDER + '/' + fileName + '.docx', buffer);
-                this.log(`Saved report for document ${document.subject}, path: ${this.destination + ANALYZE_REPORTS_FOLDER + '/' + fileName + '.docx'}`);
+                this.log(
+                    `Saved report for document ${document.subject}, path: ${this.destination + ANALYZE_REPORTS_FOLDER + '/' + fileName + '.docx'}`,
+                );
             });
         }
 

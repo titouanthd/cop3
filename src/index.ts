@@ -3,7 +3,7 @@
 import dotenv from 'dotenv';
 import { Command } from 'commander';
 import fs from 'fs';
-import {COMMANDS} from "./commands";
+import { COMMANDS } from './commands';
 
 // force the process to be in the root directory
 process.chdir(__dirname + '/..');
@@ -42,7 +42,6 @@ if (!APP_VERSION || !APP_NAME) {
 // create commander
 const commander = new Command();
 commander.version(APP_VERSION, '-v, --version').name(APP_NAME).description('CLI to control the tscrapper application').parse(process.argv);
-
 
 COMMANDS.forEach((CustomCommand) => new CustomCommand(commander));
 

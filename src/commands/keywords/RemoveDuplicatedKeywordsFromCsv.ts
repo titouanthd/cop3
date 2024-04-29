@@ -1,12 +1,12 @@
-import {Command} from "commander";
-import AbstractCommand from "../abstraction/AbstractCommand";
-import {EMPTY, FILES_FOLDER, KEYWORDS_FOLDER} from "../../globals/AppConstants";
-import DateUtil from "../../utils/DateUtil";
-import ProcessUtil from "../../utils/ProcessUtil";
-import {ERROR} from "../../services/LoggerService";
-import FolderManagerService from "../../services/FolderManagerService";
-import {IKeyword} from "../../interfaces/IKeyword";
-import {StringUtil} from "../../utils/StringUtil";
+import { Command } from 'commander';
+import AbstractCommand from '../abstraction/AbstractCommand';
+import { EMPTY, FILES_FOLDER, KEYWORDS_FOLDER } from '../../globals/AppConstants';
+import DateUtil from '../../utils/DateUtil';
+import ProcessUtil from '../../utils/ProcessUtil';
+import { ERROR } from '../../services/LoggerService';
+import FolderManagerService from '../../services/FolderManagerService';
+import { IKeyword } from '../../interfaces/IKeyword';
+import { StringUtil } from '../../utils/StringUtil';
 
 export class RemoveDuplicatedKeywordsFromCsv extends AbstractCommand {
     constructor(commander: Command) {
@@ -20,11 +20,17 @@ export class RemoveDuplicatedKeywordsFromCsv extends AbstractCommand {
         );
     }
     async execute() {
-        const bannedKeywords = FolderManagerService.getFileContent(process.cwd() + '/config/banned-keywords.txt').split('\n');
-        if (bannedKeywords.length === 0) {
-            this.log('No banned keywords found', ERROR);
+        if (!FolderManagerService.fileExists(process.cwd() + '/config/banned-keywords.txt')) {
+            this.log('Banned keywords file not found', ERROR);
             return;
         }
+        if (!FolderManagerService.fileExists(process.cwd() + '/config/banned-companies.txt')) {
+            this.log('Banned companies file not found', ERROR);
+            return;
+        }
+
+        const bannedKeywords = FolderManagerService.getFileContent(process.cwd() + '/config/banned-keywords.txt').split('\n');
+        const bannedCompanies = FolderManagerService.getFileContent(process.cwd() + '/config/banned-companies.txt').split('\n');
 
         this.log('Remove duplicated keywords from CSV');
         let targetPath = process.cwd() + '/files/keywords2.csv';
@@ -62,6 +68,12 @@ export class RemoveDuplicatedKeywordsFromCsv extends AbstractCommand {
                     k = k.replace(regex, '');
                 }
 
+                // remove the banned companies
+                for (const bannedCompany of bannedCompanies) {
+                    const regex = new RegExp(`\\b${bannedCompany}\\b`, 'gi');
+                    k = k.replace(regex, '');
+                }
+
                 k = k.replace(/\s+/g, ' ');
                 k = k.trim();
 
@@ -73,13 +85,11 @@ export class RemoveDuplicatedKeywordsFromCsv extends AbstractCommand {
             }
         }
 
-        const uniqueKeywords = keywords.filter((keyword, index, self) =>
-            index === self.findIndex((t) => (
-                t.keyword === keyword.keyword
-            )),
-        );
+        const uniqueKeywords = keywords.filter((keyword, index, self) => index === self.findIndex((t) => t.keyword === keyword.keyword));
 
-        this.log(`Removed ${totalKeywords - uniqueKeywords.length} duplicated keywords from ${totalKeywords} keywords`);
+        this.log(
+            `Removed ${totalKeywords - uniqueKeywords.length} duplicated keywords from ${totalKeywords} keywords, total unique keywords: ${uniqueKeywords.length}`,
+        );
 
         FolderManagerService.createFolder(this.destination);
         const content = uniqueKeywords.map((keyword) => `${keyword.keyword},${keyword.originalKeyword}`).join('\n');

@@ -1,7 +1,6 @@
 import { Command } from 'commander';
-import DateUtil from '../../utils/DateUtil';
 import { EMPTY } from '../../globals/AppConstants';
-import {INFO, LoggerService} from "../../services/LoggerService";
+import { INFO, LoggerService } from '../../services/LoggerService';
 
 export default abstract class AbstractCommand {
     #identifier: string = Date.now().toString();
