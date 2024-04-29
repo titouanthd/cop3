@@ -170,7 +170,7 @@ export default class ExtractStartdocContentService {
     }
 
     public async createStartdocDocumentReport(page: Page) {
-        console.log('Creating Startdoc document report...', this.docxBuilder);
+        console.log('Creating Startdoc document report...');
         const title = await this.sanitizeTitle(page);
         const metaDescription = await this.sanitizeMetaDescription(page);
         const form = await this.sanitizeForm(page);
