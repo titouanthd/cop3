@@ -33,7 +33,7 @@ export class RemoveDuplicatedKeywordsFromCsv extends AbstractCommand {
         const bannedCompanies = FolderManagerService.getFileContent(process.cwd() + '/config/banned-companies.txt').split('\n');
 
         this.log('Remove duplicated keywords from CSV');
-        let targetPath = process.cwd() + '/files/keywords2.csv';
+        let targetPath = process.cwd() + '/files/keywords.csv';
         if (this.target !== EMPTY) {
             if (ProcessUtil.isValidCsvFile(this.target)) {
                 targetPath = this.target;
