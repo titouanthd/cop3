@@ -9,6 +9,15 @@ First you need to clone the repository and install the dependencies and set the 
 ```bash
 git clone git@github.com:titouanthd/cop3.git
 cd cop3
+```
+
+```bash
+sh ./sh/mac-install.sh
+or
+sh ./sh/windows-install.sh
+```
+
+```bash
 make globall_install
 ```
 
