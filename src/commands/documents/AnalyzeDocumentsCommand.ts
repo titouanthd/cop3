@@ -1,19 +1,19 @@
 import { Command } from 'commander';
-import AbstractCommand from './abstraction/AbstractCommand';
-import FolderManagerService from '../services/FolderManagerService';
-import { EMPTY, ESTABLISHMENTS_FOLDER, FILES_FOLDER, ANALYZE_REPORTS_FOLDER } from '../globals/AppConstants';
-import ProcessUtil from '../utils/ProcessUtil';
+import AbstractCommand from '../abstraction/AbstractCommand';
+import FolderManagerService from '../../services/FolderManagerService';
+import { EMPTY, ESTABLISHMENTS_FOLDER, FILES_FOLDER, ANALYZE_REPORTS_FOLDER } from '../../globals/AppConstants';
+import ProcessUtil from '../../utils/ProcessUtil';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import StartdocDocumentInterface from '../interfaces/StartdocDocumentInterface';
-import InseeSireneApiService from '../services/InseeSireneApiService';
-import PromiseUtil from '../utils/PromiseUtil';
-import DateUtil from '../utils/DateUtil';
+import StartdocDocumentInterface from '../../interfaces/StartdocDocumentInterface';
+import InseeSireneApiService from '../../services/InseeSireneApiService';
+import PromiseUtil from '../../utils/PromiseUtil';
+import DateUtil from '../../utils/DateUtil';
 import { Document, Packer, Paragraph } from 'docx';
 import fs from 'fs';
-import InseeEstablishmentInterface from '../interfaces/InseeEstablishmentInterface';
-import ExtractStartdocContentService from '../services/ExtractStartdocContentService';
-import {ERROR} from "../services/LoggerService";
+import InseeEstablishmentInterface from '../../interfaces/InseeEstablishmentInterface';
+import ExtractStartdocContentService from '../../services/ExtractStartdocContentService';
+import {ERROR} from "../../services/LoggerService";
 
 export default class AnalyzeDocumentsCommand extends AbstractCommand {
     private startdocExtractor = new ExtractStartdocContentService();

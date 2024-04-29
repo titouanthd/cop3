@@ -46,8 +46,12 @@ export default class FolderManagerService {
     }
 
     public static createFile(filePath: string, content: string): void {
-        console.log(`Creating file: ${filePath}`);
-        fs.writeFileSync(filePath, content);
+        if (!fs.existsSync(filePath)) {
+            console.log(`Creating file: ${filePath}`);
+            fs.writeFileSync(filePath, content);
+        } else {
+            console.error(`File already exists: ${filePath}`);
+        }
     }
 
     public static deleteFile(filePath: string): void {
