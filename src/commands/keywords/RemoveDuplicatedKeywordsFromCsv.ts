@@ -48,8 +48,6 @@ export class RemoveDuplicatedKeywordsFromCsv extends AbstractCommand {
             return;
         }
 
-        this.log('Remove duplicated keywords from CSV');
-
         const csvContent = await FolderManagerService.parseCsv(targetPath);
         const totalKeywords = csvContent.length;
         const keywords: IKeyword[] = [];
@@ -64,13 +62,13 @@ export class RemoveDuplicatedKeywordsFromCsv extends AbstractCommand {
                 k = StringUtil.removeSpecialCharacters(k);
                 // remove the banned keywords
                 for (const bannedKeyword of bannedKeywords) {
-                    const regex = new RegExp(`\\b${bannedKeyword}\\b`, 'gi');
+                    const regex = new RegExp(`${bannedKeyword}`, 'gi');
                     k = k.replace(regex, '');
                 }
 
                 // remove the banned companies
                 for (const bannedCompany of bannedCompanies) {
-                    const regex = new RegExp(`\\b${bannedCompany}\\b`, 'gi');
+                    const regex = new RegExp(`${bannedCompany}`, 'gi');
                     k = k.replace(regex, '');
                 }
 
