@@ -12,12 +12,6 @@ cd cop3
 ```
 
 ```bash
-sh ./sh/mac-install.sh
-or
-sh ./sh/windows-install.sh
-```
-
-```bash
 make globall_install
 ```
 

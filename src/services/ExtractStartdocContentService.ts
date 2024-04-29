@@ -1,10 +1,8 @@
 import { Page } from 'puppeteer';
 import InseeEstablishmentInterface from '../interfaces/InseeEstablishmentInterface';
 import { HeadingLevel, Paragraph } from 'docx';
-import DocxBuilderService from './DocxBuilderService';
 
 export default class ExtractStartdocContentService {
-    private docxBuilder: DocxBuilderService = new DocxBuilderService();
 
     private async sanitizeTitle(page: Page) {
         return await page.title();
