@@ -1,9 +1,7 @@
-import FolderManagerService from "../services/FolderManagerService";
+import FolderManagerService from '../services/FolderManagerService';
 
-export default class ProcessUtil
-{
-    public static isValidCsvFile(target: string)
-    {
+export default class ProcessUtil {
+    public static isValidCsvFile(target: string) {
         if (!FolderManagerService.fileExists(target)) {
             console.log(`File ${target} does not exist`);
             return false;
@@ -17,8 +15,7 @@ export default class ProcessUtil
         return true;
     }
 
-    public static convertSubjectToFileName(subject: string): string
-    {
+    public static convertSubjectToFileName(subject: string): string {
         let fileName = subject.replace(/\s\s+/g, ' ').trim();
         fileName.replace(/[^a-zA-Z0-9-]/g, '');
         fileName = fileName.replace(/\s/g, '-').toLowerCase();

@@ -100,7 +100,7 @@ export default interface InseeEstablishmentInterface {
         adresseEtablissement: AdresseEtablissement;
         adresse2Etablissement: Adresse2Etablissement;
         periodesEtablissement: PeriodeEtablissement[];
-    }
+    };
 }
 
 export { UniteLegale, AdresseEtablissement, Adresse2Etablissement, PeriodeEtablissement };

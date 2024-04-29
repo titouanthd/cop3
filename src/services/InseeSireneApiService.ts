@@ -1,11 +1,10 @@
-export default class InseeSireneApiService
-{
+export default class InseeSireneApiService {
     public static readonly sirenApiUrl: string = 'https://api.insee.fr/entreprises/sirene/V3.11/siren';
     public static readonly siretApiUrl: string = 'https://api.insee.fr/entreprises/sirene/V3.11/siret';
     public static readonly limit: number = 1000;
 
-    public static async getEstablishmentBySiret(siret: string): Promise<any>
-    {
+    public static async getEstablishmentBySiret(siret: string): Promise<any> {
+        siret = this.formatSiret(siret);
         const apiKey = process.env.INSEE_SIRENE_API_TOKEN;
         if (apiKey === undefined) {
             console.log('INSEE_SIRENE_API_TOKEN is not defined');
@@ -28,5 +27,9 @@ export default class InseeSireneApiService
         }
 
         return response.json();
+    }
+
+    private static formatSiret(siret: string) {
+        return siret.replace(/\s/g, '');
     }
 }

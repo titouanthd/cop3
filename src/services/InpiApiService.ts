@@ -1,4 +1,1 @@
-export default class InpiApiService
-{
-
-}
+export default class InpiApiService {}

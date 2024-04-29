@@ -3,7 +3,7 @@
 import dotenv from 'dotenv';
 import { Command } from 'commander';
 import fs from 'fs';
-import AnalyzeDocumentsCommand from "./commands/AnalyzeDocumentsCommand";
+import AnalyzeDocumentsCommand from './commands/AnalyzeDocumentsCommand';
 
 // force the process to be in the root directory
 process.chdir(__dirname + '/..');
@@ -44,9 +44,7 @@ const commander = new Command();
 commander.version(APP_VERSION, '-v, --version').name(APP_NAME).description('CLI to control the tscrapper application').parse(process.argv);
 
 // @ts-ignore
-const commands = [
-    AnalyzeDocumentsCommand
-];
+const commands = [AnalyzeDocumentsCommand];
 
 // @ts-ignore
 commands.forEach((Command) => new Command(commander));

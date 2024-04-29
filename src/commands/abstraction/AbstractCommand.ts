@@ -10,7 +10,7 @@ export default abstract class AbstractCommand {
         protected alias: string,
         protected description: string,
         protected target: string = EMPTY,
-        protected destination: string = EMPTY
+        protected destination: string = EMPTY,
     ) {
         this.commander.command(this.name).alias(this.alias).description(this.description).action(this.execute.bind(this));
     }
