@@ -1,6 +1,7 @@
 # exclude .idea directory
 .idea
 bin
+config
 
 # exclude all .env files
 .env.*
