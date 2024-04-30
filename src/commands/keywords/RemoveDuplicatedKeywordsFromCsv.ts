@@ -62,8 +62,8 @@ export class RemoveDuplicatedKeywordsFromCsv extends AbstractCommand {
                 k = StringUtil.removeSpecialCharacters(k);
                 // remove the banned keywords
                 for (const bannedKeyword of bannedKeywords) {
-                    const singular = bannedKeyword.value;
-                    const regexSingular = new RegExp(`${singular.replace(' ', '\\s')}`, 'gm');
+                    const singular = bannedKeyword.value.toLowerCase().replace(/\s+/g, '\\s');
+                    const regexSingular = new RegExp(`${singular}`, 'gm');
                     if (k.match(regexSingular)) {
                         console.log(regexSingular, k.match(regexSingular));
                         k = k.replace(regexSingular, '');
@@ -72,8 +72,9 @@ export class RemoveDuplicatedKeywordsFromCsv extends AbstractCommand {
 
                 // remove the banned companies
                 for (const bannedCompany of bannedCompanies) {
-                    const singular = bannedCompany.value;
-                    const regexSingular = new RegExp(`${singular.replace(' ', '\\s')}`, 'gm');
+                    // replace all spaces
+                    const singular = bannedCompany.value.toLowerCase().replace(/\s+/g, '\\s');
+                    const regexSingular = new RegExp(`${singular}`, 'gm');
                     if (k.match(regexSingular)) {
                         console.log(regexSingular, k.match(regexSingular));
                         k = k.replace(regexSingular, '');
