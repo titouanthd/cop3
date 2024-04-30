@@ -20,17 +20,17 @@ export class RemoveDuplicatedKeywordsFromCsv extends AbstractCommand {
         );
     }
     async execute() {
-        if (!FolderManagerService.fileExists(process.cwd() + '/config/banned-keywords.txt')) {
+        if (!FolderManagerService.fileExists(process.cwd() + '/config/banned-keywords.csv')) {
             this.log('Banned keywords file not found', ERROR);
             return;
         }
-        if (!FolderManagerService.fileExists(process.cwd() + '/config/banned-companies.txt')) {
+        if (!FolderManagerService.fileExists(process.cwd() + '/config/banned-companies.csv')) {
             this.log('Banned companies file not found', ERROR);
             return;
         }
 
-        const bannedKeywords = FolderManagerService.getFileContent(process.cwd() + '/config/banned-keywords.txt').split('\n');
-        const bannedCompanies = FolderManagerService.getFileContent(process.cwd() + '/config/banned-companies.txt').split('\n');
+        const bannedKeywords: {value: string;}[] = await FolderManagerService.parseCsv(process.cwd() + '/config/banned-keywords.csv');
+        const bannedCompanies: {value: string;}[] = await FolderManagerService.parseCsv(process.cwd() + '/config/banned-companies.csv');
 
         this.log('Remove duplicated keywords from CSV');
         let targetPath = process.cwd() + '/files/keywords.csv';
@@ -62,17 +62,23 @@ export class RemoveDuplicatedKeywordsFromCsv extends AbstractCommand {
                 k = StringUtil.removeSpecialCharacters(k);
                 // remove the banned keywords
                 for (const bannedKeyword of bannedKeywords) {
-                    const regex = new RegExp(`${bannedKeyword}`, 'gi');
-                    k = k.replace(regex, '');
+                    const singular = bannedKeyword.value;
+                    const regexSingular = new RegExp(`${singular.replace(' ', '\\s')}`, 'gm');
+                    if (k.match(regexSingular)) {
+                        console.log(regexSingular, k.match(regexSingular));
+                        k = k.replace(regexSingular, '');
+                    }
                 }
 
                 // remove the banned companies
                 for (const bannedCompany of bannedCompanies) {
-                    const regex = new RegExp(`${bannedCompany}`, 'gi');
-                    k = k.replace(regex, '');
+                    const singular = bannedCompany.value;
+                    const regexSingular = new RegExp(`${singular.replace(' ', '\\s')}`, 'gm');
+                    if (k.match(regexSingular)) {
+                        console.log(regexSingular, k.match(regexSingular));
+                        k = k.replace(regexSingular, '');
+                    }
                 }
-
-                // coucou mon amour
 
                 k = k.replace(/\s+/g, ' ');
                 k = k.trim();
