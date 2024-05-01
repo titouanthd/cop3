@@ -13,8 +13,23 @@ export default abstract class AbstractCommand {
         protected description: string,
         protected target: string = EMPTY,
         protected destination: string = EMPTY,
+        protected options: {
+            flags: string,
+            description: string|undefined,
+            defaultValue?: string|boolean|string[]|undefined,
+        }[] = [],
     ) {
-        this.commander.command(this.name).alias(this.alias).description(this.description).action(this.execute.bind(this));
+        this.commander
+            .command(this.name)
+            .alias(this.alias)
+            .description(this.description)
+            .action(this.execute.bind(this));
+
+        if (this.options.length > 0) {
+            this.options.forEach(option => {
+                this.commander.option(option.flags, option.description, option.defaultValue);
+            });
+        }
     }
 
     protected abstract execute(): Promise<void>;

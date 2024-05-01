@@ -19,6 +19,13 @@ export class RemoveDuplicatedKeywordsFromCsv extends AbstractCommand {
             'Remove duplicated keywords from CSV',
             process.argv[3] ?? EMPTY,
             process.cwd() + '/' + FILES_FOLDER + '/' + KEYWORDS_FOLDER + '/' + DateUtil.getFormattedIsoDate() + '/',
+            [
+                {
+                    flags: '-f, --file <file>',
+                    description: 'File name to process',
+                    defaultValue: EMPTY,
+                },
+            ]
         );
     }
     async execute() {
@@ -51,16 +58,16 @@ export class RemoveDuplicatedKeywordsFromCsv extends AbstractCommand {
             return b.value.length - a.value.length;
         });
 
-
         this.log('Remove duplicated keywords from CSV');
         let targetPath = process.cwd() + '/files/keywords.csv';
-        if (this.target !== EMPTY) {
-            if (ProcessUtil.isValidCsvFile(this.target)) {
-                targetPath = this.target;
-            } else {
-                this.log('Invalid target file', ERROR);
+        const options = this.commander.opts();
+        if (options.file !== false && typeof options.file === 'string') {
+            const folder = process.cwd() + '/files/';
+            if (!FolderManagerService.fileExists(folder + options.file) || !options.file.endsWith('.csv')) {
+                this.log(`File ${folder + options.file} not found`, ERROR);
                 return;
             }
+            targetPath = folder + options.file;
         }
 
         if (this.destination === EMPTY) {
@@ -68,6 +75,7 @@ export class RemoveDuplicatedKeywordsFromCsv extends AbstractCommand {
             return;
         }
 
+        this.log(`Reading file: ${targetPath}`);
         const csvContent = await FolderManagerService.parseCsv(targetPath);
         const totalKeywords = csvContent.length;
         const keywords: IKeyword[] = [];

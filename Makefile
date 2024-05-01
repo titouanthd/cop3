@@ -41,4 +41,4 @@ uninstall:
 	npm uninstall -g cop3
 
 dev:
-	$(NODE_DEV) $(TS_NODE) $(DEV_PATH) $(cmd) $(f)
+	$(NODE_DEV) $(TS_NODE) $(DEV_PATH) $(cmd) $(flags)

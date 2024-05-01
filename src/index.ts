@@ -41,11 +41,11 @@ if (!APP_VERSION || !APP_NAME) {
 
 // create commander
 const commander = new Command();
-commander.version(APP_VERSION, '-v, --version').name(APP_NAME).description('CLI to control the tscrapper application').parse(process.argv);
+commander.version(APP_VERSION, '-v, --version').name(APP_NAME).description('CLI to control the tscrapper application');
+// Parse the arguments
 
 COMMANDS.forEach((CustomCommand) => new CustomCommand(commander));
 
-// Parse the arguments
 commander.parse(process.argv);
 
 process.on('unhandledRejection', (reason, promise) => {
