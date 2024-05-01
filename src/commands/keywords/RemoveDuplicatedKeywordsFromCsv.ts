@@ -7,6 +7,8 @@ import { ERROR } from '../../services/LoggerService';
 import FolderManagerService from '../../services/FolderManagerService';
 import { IKeyword } from '../../interfaces/IKeyword';
 import { StringUtil } from '../../utils/StringUtil';
+import {RemoveDuplicatedKeywordsService} from "../../services/RemoveDuplicatedKeywordsService";
+import PromiseUtil from "../../utils/PromiseUtil";
 
 export class RemoveDuplicatedKeywordsFromCsv extends AbstractCommand {
     constructor(commander: Command) {
@@ -29,8 +31,26 @@ export class RemoveDuplicatedKeywordsFromCsv extends AbstractCommand {
             return;
         }
 
+        const service = new RemoveDuplicatedKeywordsService();
+        await service.updateKeywordsOrder(process.cwd() + '/config/banned-keywords.csv');
+        await service.updateKeywordsOrder(process.cwd() + '/config/banned-companies.csv');
+
         const bannedKeywords: {value: string;}[] = await FolderManagerService.parseCsv(process.cwd() + '/config/banned-keywords.csv');
         const bannedCompanies: {value: string;}[] = await FolderManagerService.parseCsv(process.cwd() + '/config/banned-companies.csv');
+
+        // merge the banned keywords and companies
+        const bannedKeywordsAndCompanies = [...bannedKeywords, ...bannedCompanies];
+
+        // sort alphabetically
+        bannedKeywordsAndCompanies.sort((a, b) => {
+            return a.value.localeCompare(b.value);
+        });
+
+        // sort by length
+        bannedKeywordsAndCompanies.sort((a, b) => {
+            return b.value.length - a.value.length;
+        });
+
 
         this.log('Remove duplicated keywords from CSV');
         let targetPath = process.cwd() + '/files/keywords.csv';
@@ -61,23 +81,12 @@ export class RemoveDuplicatedKeywordsFromCsv extends AbstractCommand {
                 // remove special characters like - _ . , ; : ! ? etc.
                 k = StringUtil.removeSpecialCharacters(k);
                 // remove the banned keywords
-                for (const bannedKeyword of bannedKeywords) {
-                    const singular = bannedKeyword.value.toLowerCase().replace(/\s+/g, '\\s');
-                    const regexSingular = new RegExp(`${singular}`, 'gm');
-                    if (k.match(regexSingular)) {
-                        console.log(regexSingular, k.match(regexSingular));
-                        k = k.replace(regexSingular, '');
-                    }
-                }
-
-                // remove the banned companies
-                for (const bannedCompany of bannedCompanies) {
-                    // replace all spaces
-                    const singular = bannedCompany.value.toLowerCase().replace(/\s+/g, '\\s');
-                    const regexSingular = new RegExp(`${singular}`, 'gm');
-                    if (k.match(regexSingular)) {
-                        console.log(regexSingular, k.match(regexSingular));
-                        k = k.replace(regexSingular, '');
+                for (const bannedKeyword of bannedKeywordsAndCompanies) {
+                    let value = bannedKeyword.value;
+                    value = value.replace(/\s+/g, '\\s');
+                    let regex = new RegExp(`\\b${value}\\b`, 'gi');
+                    if (k.match(regex)) {
+                        k = k.replace(regex, '');
                     }
                 }
 
