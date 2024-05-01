@@ -101,7 +101,7 @@ export class RemoveDuplicatedKeywordsFromCsv extends AbstractCommand {
             }
         }
 
-        const uniqueKeywords = keywords.filter((keyword, index, self) => index === self.findIndex((t) => t.keyword === keyword.keyword));
+        const uniqueKeywords = keywords.filter((keyword, index, self) => index === self.findIndex((t) => t.keyword === keyword.keyword && t.keyword !== ""));
 
         this.log(
             `Removed ${totalKeywords - uniqueKeywords.length} duplicated keywords from ${totalKeywords} keywords, total unique keywords: ${uniqueKeywords.length}`,
