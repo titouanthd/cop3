@@ -6,18 +6,25 @@ export class RemoveDuplicatedKeywordsService {
         if (!keywords || keywords.length <= 0) {
             return;
         }
+
+
+        // we must remove all empty keywords
+        const emptyKeywords = keywords.filter((keyword) => {
+            return keyword.value === '';
+        });
+
         // sort keywords alphabetically
-        keywords.sort((a, b) => {
+        emptyKeywords.sort((a, b) => {
             return a.value.localeCompare(b.value);
         });
         // sort keywords by length
-        keywords.sort((a, b) => {
+        emptyKeywords.sort((a, b) => {
             return b.value.length - a.value.length;
         });
 
         // save updated keywords
         let content = 'value\n';
-        keywords.forEach((keyword) => {
+        emptyKeywords.forEach((keyword) => {
             content += keyword.value + '\n';
         });
         // delete old file
