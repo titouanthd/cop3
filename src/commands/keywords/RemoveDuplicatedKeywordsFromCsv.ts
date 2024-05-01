@@ -86,6 +86,7 @@ export class RemoveDuplicatedKeywordsFromCsv extends AbstractCommand {
                     value = value.replace(/\s+/g, '\\s');
                     let regex = new RegExp(`\\b${value}\\b`, 'gi');
                     if (k.match(regex)) {
+                        console.log(regex, 'match on', k);
                         k = k.replace(regex, '');
                     }
                 }

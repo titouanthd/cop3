@@ -15,7 +15,6 @@ export class RemoveDuplicatedKeywordsService {
 
         // sort keywords alphabetically
         notEmptyKeywords.sort((a, b) => {
-            console.log(a.value, b.value);
             return a.value.localeCompare(b.value);
         });
         // sort keywords by length
