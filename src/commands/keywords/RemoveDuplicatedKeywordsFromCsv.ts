@@ -61,7 +61,7 @@ export class RemoveDuplicatedKeywordsFromCsv extends AbstractCommand {
         this.log('Remove duplicated keywords from CSV');
         let targetPath = process.cwd() + '/files/keywords.csv';
         const options = this.commander.opts();
-        if (options.file !== false && typeof options.file === 'string') {
+        if (options.file !== EMPTY && typeof options.file === 'string') {
             const folder = process.cwd() + '/files/';
             if (!FolderManagerService.fileExists(folder + options.file) || !options.file.endsWith('.csv')) {
                 this.log(`File ${folder + options.file} not found`, ERROR);
