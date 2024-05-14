@@ -1,0 +1,31 @@
+export interface ILetter {
+    status: string | null;
+    date: string | null;
+    company_name: string | null;
+    doc_name: string | null;
+    folder_name: string | null;
+    slug: string | null;
+    ref_back_office: string | null;
+    adresse_resiliation: string | null;
+    address_line_1: string | null;
+    address_line_2: string | null;
+    address_line_3: string | null;
+    address_line_4: string | null;
+    seo_title: string | null;
+    seo_description: string | null;
+    long_seo_content_title: string | null;
+    logo: string | null;
+    logo_link: string | null;
+    color_1: string | null;
+    color_2: string | null;
+    letter_status: string | null;
+    resiliation_id_label: string | null;
+    resiliation_id_custom_filed: string | null;
+    resiliation_id_custom_filed_2: string | null;
+    add_motif_to_objet: string | null;
+    resiliation_motif: string | null;
+    select_address: string | null;
+    comments: string | null;
+    company_address_link: string | null;
+    doc_link: string | null;
+}
