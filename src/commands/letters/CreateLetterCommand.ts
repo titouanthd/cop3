@@ -196,7 +196,7 @@ export class CreateLetterCommand extends AbstractCommand {
             const buffer = await logo.arrayBuffer();
             fs.writeFileSync(folder + '/' + this.sanitizeLogoName(logoName || ''), Buffer.from(buffer));
         } else if (letter.logo_link !== null && letter.logo_link.includes('svg')) {
-            fs.copyFileSync(letter.logo_link, folder + '/' + DateUtil.getFormattedIsoDate() + '.svg');
+            fs.writeFileSync(folder + '/' + DateUtil.getFormattedIsoDate() + '.svg', letter.logo_link);
         }
     }
 
