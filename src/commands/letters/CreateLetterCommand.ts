@@ -61,7 +61,7 @@ export class CreateLetterCommand extends AbstractCommand {
     }
 
     private async getLetter(letter: ILetter, folder: string): Promise<Document> {
-        const logo = await this.saveLogo(letter, folder);
+        await this.saveLogo(letter, folder);
         const shopCoordinates: Paragraph[] = this.getShopCoordinates(letter)
         const clientCoordinates: any[] = this.getClientCoordinates(letter)
 
@@ -195,8 +195,8 @@ export class CreateLetterCommand extends AbstractCommand {
             }
             const buffer = await logo.arrayBuffer();
             fs.writeFileSync(folder + '/' + this.sanitizeLogoName(logoName || ''), Buffer.from(buffer));
-        } else if (letter.logo_link !== null) {
-            fs.copyFileSync(letter.logo_link, folder + '/' + DateUtil.getFormattedIsoDate() + '.png');
+        } else if (letter.logo_link !== null && letter.logo_link.includes('svg')) {
+            fs.copyFileSync(letter.logo_link, folder + '/' + DateUtil.getFormattedIsoDate() + '.svg');
         }
     }
 
