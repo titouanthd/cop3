@@ -95,7 +95,6 @@ export default class FindStartDocOutdatedDocumentsCommand extends AbstractComman
             }
 
             console.log(`Document ${count}/${documentsURls.length} fetched`);
-            await PromiseUtil.randomSleep(1000, 2000);
         }
 
         console.log('URLs to refresh', URLsToRefresh);
